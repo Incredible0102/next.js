@@ -272,6 +272,8 @@ export function createRSCAliases(
     // optimizations to ignore the legacy build of react-dom/server in `server.browser` build
     'react-dom/server.edge$': `next/dist/build/webpack/alias/react-dom-server-edge${bundledReactChannel}.js`,
     'react-dom/server.browser$': `next/dist/build/webpack/alias/react-dom-server-browser${bundledReactChannel}.js`,
+    // react-markup under "react-server" condition
+    'react-markup$': `next/dist/compiled/react-markup${bundledReactChannel}/react-markup.react-server.js`,
     // react-server-dom-webpack alias
     ...createRSCRendererAliases(bundledReactChannel),
   }
@@ -300,7 +302,12 @@ export function createRSCAliases(
   }
 
   if (isEdgeServer) {
-    if (layer === WEBPACK_LAYERS.reactServerComponents) {
+    if (layer === WEBPACK_LAYERS.serverSideRendering) {
+      alias = Object.assign(alias, {
+        // react-markup under "default" condition
+        'react-markup$': `next/dist/compiled/react-markup${bundledReactChannel}/index.js`,
+      })
+    } else if (layer === WEBPACK_LAYERS.reactServerComponents) {
       alias = Object.assign(alias, {
         react$: `next/dist/compiled/react${bundledReactChannel}/react.react-server`,
         'next/dist/compiled/react$': `next/dist/compiled/react${bundledReactChannel}/react.react-server`,
